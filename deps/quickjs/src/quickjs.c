@@ -284,6 +284,8 @@ struct JSRuntime {
     JSNumericOperations bigdecimal_ops;
     uint32_t operator_count;
 #endif
+
+    void *user_opaque;
 };
 
 struct JSClass {
@@ -1631,6 +1633,16 @@ static const JSMallocFunctions def_malloc_funcs = {
 JSRuntime *JS_NewRuntime(void)
 {
     return JS_NewRuntime2(&def_malloc_funcs, NULL);
+}
+
+void *JS_GetRuntimeOpaque(JSRuntime *rt)
+{
+    return rt->user_opaque;
+}
+
+void JS_SetRuntimeOpaque(JSRuntime *rt, void *opaque)
+{
+    rt->user_opaque = opaque;
 }
 
 void JS_SetMemoryLimit(JSRuntime *rt, size_t limit)

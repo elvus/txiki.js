@@ -146,6 +146,9 @@ TJSRuntime *TJS_NewRuntime2(bool is_worker) {
     qrt->ctx = JS_NewContext(qrt->rt);
     CHECK_NOT_NULL(qrt->ctx);
 
+    JS_SetRuntimeOpaque(qrt->rt, qrt);
+    JS_SetContextOpaque(qrt->ctx, qrt);
+
     /* Increase stack size */
     JS_SetMaxStackSize(qrt->ctx, 1024*1024);
 
@@ -172,8 +175,6 @@ TJSRuntime *TJS_NewRuntime2(bool is_worker) {
     /* hande for stopping this runtime (also works from another thread) */
     CHECK_EQ(uv_async_init(&qrt->loop, &qrt->stop, uv__stop), 0);
     qrt->stop.data = qrt;
-
-    JS_SetContextOpaque(qrt->ctx, qrt);
 
     /* loader for ES6 modules */
     JS_SetModuleLoaderFunc(qrt->rt, tjs_module_normalizer, tjs_module_loader, qrt);
